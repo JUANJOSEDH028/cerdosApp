@@ -10,7 +10,7 @@ import apiClient from '../services/api.client';
  * @param enabled - Si el keep-alive está habilitado (default: true)
  */
 export function useKeepAlive(intervalMinutes: number = 3, enabled: boolean = true) {
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!enabled) {
