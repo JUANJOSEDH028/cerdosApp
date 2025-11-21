@@ -6,15 +6,15 @@
  */
 
 import {
-  corralesService,
-  alimentosService,
-  lotesService,
+  corralService,
+  alimentoService,
+  loteService,
   consumoAlimentoService,
   mortalidadService,
-  cosechasService,
-  gastosDirectosService,
-  gastosMensualesService,
-  reportesService,
+  cosechaService,
+  gastoDirectoService,
+  gastoMensualService,
+  reporteService,
 } from './index';
 
 // ==============================================
@@ -23,11 +23,11 @@ import {
 
 export async function ejemploCrearLoteCompleto() {
   // 1. Obtener corrales disponibles
-  const corrales = await corralesService.getActivos();
+  const corrales = await corralService.getAll();
   const corralesIds = corrales.slice(0, 2).map(c => c.id); // Seleccionar 2 corrales
 
   // 2. Crear el lote
-  const nuevoLote = await lotesService.create({
+  const nuevoLote = await loteService.create({
     numero_lote: `LOTE-${Date.now()}`,
     fecha_inicio: new Date().toISOString().split('T')[0],
     animales_iniciales: 100,
@@ -49,7 +49,7 @@ export async function ejemploCrearLoteCompleto() {
 
 export async function ejemploRegistrarConsumo(loteId: string) {
   // 1. Obtener alimentos disponibles
-  const alimentos = await alimentosService.getActivos();
+  const alimentos = await alimentoService.getAll();
   
   // 2. Filtrar por tipo
   const preiniciador = alimentos.find(a => a.tipo === 'preiniciador');
@@ -95,7 +95,7 @@ export async function ejemploRegistrarMortalidad(loteId: string) {
 
 export async function ejemploCosecharLote(loteId: string) {
   // 1. Primera cosecha (cabezas)
-  const cosecha1 = await cosechasService.create({
+  const cosecha1 = await cosechaService.create({
     lote_id: loteId,
     fecha: new Date().toISOString().split('T')[0],
     tipo: 'cabezas',
@@ -107,7 +107,7 @@ export async function ejemploCosecharLote(loteId: string) {
   console.log('📦 Primera cosecha:', cosecha1);
 
   // 2. Segunda cosecha (media)
-  const cosecha2 = await cosechasService.create({
+  const cosecha2 = await cosechaService.create({
     lote_id: loteId,
     fecha: new Date().toISOString().split('T')[0],
     tipo: 'media',
@@ -119,7 +119,7 @@ export async function ejemploCosecharLote(loteId: string) {
   console.log('📦 Segunda cosecha:', cosecha2);
 
   // 3. Última cosecha (colas) - esto cierra el lote automáticamente
-  const cosechaFinal = await cosechasService.create({
+  const cosechaFinal = await cosechaService.create({
     lote_id: loteId,
     fecha: new Date().toISOString().split('T')[0],
     tipo: 'colas',
@@ -131,10 +131,10 @@ export async function ejemploCosecharLote(loteId: string) {
   console.log('📦 Cosecha final:', cosechaFinal);
 
   // 4. Calcular totales
-  const totales = await cosechasService.getTotalesByLote(loteId);
-  console.log('📊 Totales vendidos:', totales);
+  // const totales = await cosechaService.getTotalesByLote(loteId);
+  // console.log('📊 Totales vendidos:', totales);
 
-  return { cosecha1, cosecha2, cosechaFinal, totales };
+  return { cosecha1, cosecha2, cosechaFinal };
 }
 
 // ==============================================
@@ -143,7 +143,7 @@ export async function ejemploCosecharLote(loteId: string) {
 
 export async function ejemploRegistrarGastos(loteId: string) {
   // 1. Gasto directo: Flete
-  const flete = await gastosDirectosService.create({
+  const flete = await gastoDirectoService.create({
     lote_id: loteId,
     fecha: new Date().toISOString().split('T')[0],
     concepto: 'Transporte a planta',
@@ -153,7 +153,7 @@ export async function ejemploRegistrarGastos(loteId: string) {
   });
 
   // 2. Gasto directo: Inmunocastración
-  const inmuno = await gastosDirectosService.create({
+  const inmuno = await gastoDirectoService.create({
     lote_id: loteId,
     fecha: new Date().toISOString().split('T')[0],
     concepto: 'Inmunocastración machos',
@@ -163,10 +163,10 @@ export async function ejemploRegistrarGastos(loteId: string) {
   });
 
   // 3. Calcular total de gastos directos
-  const totalDirectos = await gastosDirectosService.getTotalByLote(loteId);
+  // const totalDirectos = await gastoDirectoService.getTotalByLote(loteId);
 
-  console.log('💰 Gastos registrados:', { flete, inmuno, totalDirectos });
-  return { flete, inmuno, totalDirectos };
+  console.log('💰 Gastos registrados:', { flete, inmuno });
+  return { flete, inmuno };
 }
 
 // ==============================================
@@ -179,7 +179,7 @@ export async function ejemploRegistrarGastosMensuales() {
   const anio = hoy.getFullYear();
 
   // 1. Arriendo (se prorrateo con fórmula especial)
-  const arriendo = await gastosMensualesService.create({
+  const arriendo = await gastoMensualService.create({
     mes,
     anio,
     concepto: 'Arriendo granja',
@@ -189,7 +189,7 @@ export async function ejemploRegistrarGastosMensuales() {
   });
 
   // 2. Servicios
-  const servicios = await gastosMensualesService.create({
+  const servicios = await gastoMensualService.create({
     mes,
     anio,
     concepto: 'Luz y agua',
@@ -198,7 +198,7 @@ export async function ejemploRegistrarGastosMensuales() {
   });
 
   // 3. Nómina
-  const nomina = await gastosMensualesService.create({
+  const nomina = await gastoMensualService.create({
     mes,
     anio,
     concepto: 'Salarios personal',
@@ -208,10 +208,10 @@ export async function ejemploRegistrarGastosMensuales() {
   });
 
   // 4. Calcular total del mes
-  const totalMes = await gastosMensualesService.getTotalByMes(anio, mes);
+  // const totalMes = await gastoMensualService.getTotalByMes(anio, mes);
 
-  console.log('📅 Gastos mensuales registrados:', { arriendo, servicios, nomina, totalMes });
-  return { arriendo, servicios, nomina, totalMes };
+  console.log('📅 Gastos mensuales registrados:', { arriendo, servicios, nomina });
+  return { arriendo, servicios, nomina };
 }
 
 // ==============================================
@@ -222,7 +222,7 @@ export async function ejemploReporteCompleto(loteId: string) {
   console.log('📊 Generando reporte completo...');
 
   // 1. Obtener costos detallados
-  const costos = await reportesService.getCostosLote(loteId);
+  const costos = await reporteService.getCostosLote(loteId);
   
   console.log('\n💰 COSTOS TOTALES');
   console.log('═════════════════════════════════════════');
@@ -240,7 +240,7 @@ export async function ejemploReporteCompleto(loteId: string) {
   console.log(`  - Engorde: ${costos.detalle_alimento.detalle.engorde?.kg || 0} kg`);
 
   // 2. Obtener indicadores
-  const indicadores = await reportesService.getIndicadoresLote(loteId);
+  const indicadores = await reporteService.getIndicadoresLote(loteId);
 
   console.log('\n📈 INDICADORES DE EFICIENCIA');
   console.log('═════════════════════════════════════════');
@@ -262,7 +262,7 @@ export async function ejemploReporteCompleto(loteId: string) {
 // ==============================================
 
 export async function ejemploProrrateoMensual(loteId: string, anio: number, mes: number) {
-  const prorrateo = await reportesService.getProrrateoMensual(loteId, anio, mes);
+  const prorrateo = await reporteService.getProrrateoMensual(loteId, anio, mes);
 
   console.log(`\n📊 PRORRATEO ${anio}-${mes.toString().padStart(2, '0')}`);
   console.log('═════════════════════════════════════════');
@@ -293,11 +293,11 @@ export async function ejemploDashboardLotes() {
   console.log('═════════════════════════════════════════\n');
 
   // 1. Obtener todos los lotes activos
-  const lotesActivos = await lotesService.getActivos();
+  const lotesActivos = await loteService.getAll();
 
   // 2. Obtener detalle de cada lote
   for (const lote of lotesActivos) {
-    const detalle = await lotesService.getById(lote.id);
+    const detalle = await loteService.getById(lote.id);
     
     console.log(`📦 ${detalle.numero_lote}`);
     console.log(`   Inicio: ${detalle.fecha_inicio}`);
@@ -366,7 +366,7 @@ export async function ejemploFlujCompleto() {
  * Ejemplo de uso en un componente React con hooks
  * 
  * import { useEffect, useState } from 'react';
- * import { lotesService, type Lote } from '@/services';
+ * import { loteService, type Lote } from '@/services';
  * 
  * export function LotesComponent() {
  *   const [lotes, setLotes] = useState<Lote[]>([]);
@@ -378,7 +378,7 @@ export async function ejemploFlujCompleto() {
  * 
  *   const loadLotes = async () => {
  *     try {
- *       const data = await lotesService.getActivos();
+ *       const data = await loteService.getAll();
  *       setLotes(data);
  *     } catch (error) {
  *       console.error('Error:', error);
@@ -389,7 +389,7 @@ export async function ejemploFlujCompleto() {
  * 
  *   const handleCrear = async (formData) => {
  *     try {
- *       await lotesService.create(formData);
+ *       await loteService.create(formData);
  *       await loadLotes(); // Recargar
  *     } catch (error) {
  *       console.error('Error al crear:', error);

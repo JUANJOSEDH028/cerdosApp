@@ -1,5 +1,5 @@
 // Formulario para registrar consumo de alimento
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { ConsumoAlimentoCreate, Lote, Alimento } from '../../types';
 
 interface ConsumoFormProps {

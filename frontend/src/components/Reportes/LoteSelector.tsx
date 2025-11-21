@@ -69,8 +69,8 @@ export default function LoteSelector({ onSelect, selectedLoteId }: LoteSelectorP
         {lotes.map((lote) => (
           <option key={lote.id} value={lote.id}>
             {lote.numero_lote} - {lote.fecha_inicio}
-            {lote.estado === 'CERRADO' ? ' (CERRADO)' : ' (ACTIVO)'}
-            {' - '}{lote.cantidad_inicial} animales
+            {lote.estado === 'cerrado' ? ' (CERRADO)' : ' (ACTIVO)'}
+            {' - '}{lote.animales_iniciales} animales
           </option>
         ))}
       </select>
