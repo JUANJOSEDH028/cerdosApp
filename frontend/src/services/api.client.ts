@@ -18,7 +18,13 @@ apiClient.interceptors.request.use(
   (config) => {
     // Aquí podrías agregar tokens de autenticación en el futuro
     // config.headers.Authorization = `Bearer ${token}`;
-    console.log('📤 Request:', config.method?.toUpperCase(), config.url);
+    
+    // No mostrar logs para peticiones de keep-alive
+    const isKeepAlive = config.headers?.['X-Keep-Alive'] === 'true';
+    if (!isKeepAlive) {
+      console.log('📤 Request:', config.method?.toUpperCase(), config.url);
+    }
+    
     return config;
   },
   (error) => {
@@ -30,19 +36,27 @@ apiClient.interceptors.request.use(
 // Interceptor para responses (opcional - para manejo de errores global)
 apiClient.interceptors.response.use(
   (response) => {
-    console.log('✅ Response:', response.status, response.config.url);
+    // No mostrar logs para peticiones de keep-alive
+    const isKeepAlive = response.config.headers?.['X-Keep-Alive'] === 'true';
+    if (!isKeepAlive) {
+      console.log('✅ Response:', response.status, response.config.url);
+    }
     return response;
   },
   (error) => {
-    console.error('❌ Response Error:', error.response?.status, error.message);
-    
-    // Manejo de errores comunes
-    if (error.response?.status === 404) {
-      console.error('Recurso no encontrado');
-    } else if (error.response?.status === 422) {
-      console.error('Error de validación:', error.response.data);
-    } else if (error.response?.status === 500) {
-      console.error('Error del servidor');
+    // No mostrar logs de error para peticiones de keep-alive
+    const isKeepAlive = error.config?.headers?.['X-Keep-Alive'] === 'true';
+    if (!isKeepAlive) {
+      console.error('❌ Response Error:', error.response?.status, error.message);
+      
+      // Manejo de errores comunes
+      if (error.response?.status === 404) {
+        console.error('Recurso no encontrado');
+      } else if (error.response?.status === 422) {
+        console.error('Error de validación:', error.response.data);
+      } else if (error.response?.status === 500) {
+        console.error('Error del servidor');
+      }
     }
     
     return Promise.reject(error);

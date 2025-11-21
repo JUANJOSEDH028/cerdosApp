@@ -3,9 +3,13 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import { useKeepAlive } from '../../hooks/useKeepAlive';
 
 export default function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Mantener activo el backend con peticiones cada 3 minutos
+  useKeepAlive(3, true);
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
