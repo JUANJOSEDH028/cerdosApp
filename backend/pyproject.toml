@@ -1,0 +1,35 @@
+[project]
+name = "cerdos"
+version = "0.1.0"
+description = "Sistema de Control de Costos para Ceba de Cerdos - Backend API"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.121.3",
+    "uvicorn[standard]>=0.32.0",
+    "supabase>=2.9.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.6.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.1",
+    "ruff>=0.7.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

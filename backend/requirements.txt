@@ -1,0 +1,14 @@
+# FastAPI Framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# Supabase Client
+supabase==2.10.0
+
+# Pydantic
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# Python Environment Variables
+python-dotenv==1.0.1
+
