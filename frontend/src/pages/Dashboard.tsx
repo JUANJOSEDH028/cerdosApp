@@ -321,7 +321,7 @@ export default function Dashboard() {
                     const porcentajeMortalidadLote = (lote.total_mortalidad / lote.animales_iniciales) * 100;
                     return porcentajeMortalidadLote > 5;
                   }) && (
-                    <li>⚠️ Algunos lotes tienen alta mortalidad (>{5}%)</li>
+                    <li>⚠️ Algunos lotes tienen alta mortalidad (&gt;5%)</li>
                   )}
                   <li>Registrar consumo de alimento del día</li>
                   {lotesActivos.length > 0 && (
